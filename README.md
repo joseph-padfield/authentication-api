@@ -23,7 +23,7 @@ This is a backend API for user authentication built with Node.js, Express, and M
 * Install dependencies
 ``` npm install ```
 * Set up environment variables:\
-Create a `.env` file in the root directory and add `DB_URL` and `JWT_SECRET`
+Create a `.env` file in the root directory and add `PORT`, `DB_URL` and `JWT_SECRET`
 * Create database `authDB` with collection `users`
 * Start the server:
 `npm start`

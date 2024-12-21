@@ -63,7 +63,8 @@ router.post('/signup', async (req, res) => {
         const result = await usersCollection.insertOne(sanitisedUser)
         res.status(201).json({message: 'User registered successfully', userId: result.insertedId})
 
-    } catch (error) {
+    }
+    catch (error) {
         console.error('Error during signup:', error)
         res.status(500).json({message: 'Signup failed.'})
     }
