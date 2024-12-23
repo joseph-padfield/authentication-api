@@ -3,8 +3,23 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const router = express.Router()
 const dbConnect = require('../db/dbConnect')
+const {response} = require("express");
+const auth = require('../auth')
 
 dbConnect()
+
+router.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization'
+    )
+    res.setHeader(
+        'Access-Control-Allow-Methods',
+        'GET, POST, PUT, DELETE, PATCH, OPTIONS'
+    )
+    next()
+})
 
 // just a debugging route
 router.get("/", (req, res, next) => {
@@ -102,6 +117,14 @@ router.post('/login', async (req, res) => {
         console.error('Error during login', error)
         res.status(500).json({message: 'Login failed.'})
     }
+})
+
+router.get('/free-endpoint', async (req, res) => {
+    res.json({message: "This is a freely accessible endpoint."})
+})
+
+router.get('/auth-endpoint', auth, async (req, res) => {
+    res.json({message: "This is a secure endpoint. If you can read this, it means that you are authorised."})
 })
 
 // this function checks for correct email format.
