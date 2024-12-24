@@ -1,6 +1,7 @@
-require('dotenv').config()
-const { MongoClient, ObjectId } = require('mongodb')
+require('dotenv').config() // load environment variables from .env file
+const { MongoClient, ObjectId } = require('mongodb') // import MongoClient and ObjectId from mongodb driver
 
+// retrieve the database connection URL from environment variables
 const url = process.env.DB_URL
 const dbName = 'authDB'
 const client = new MongoClient(url)

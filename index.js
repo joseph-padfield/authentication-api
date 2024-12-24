@@ -1,10 +1,10 @@
 const express = require('express')
 const app = express()
 const router = require('./routes/router')
-const bodyParser = require('body-parser')
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.json())
+// middleware to parse url-encoded request bodies (for forms)
+app.use(express.urlencoded({ extended: true }))
 app.use('/api', router)
 
 const port = process.env.PORT || 3000

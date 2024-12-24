@@ -8,8 +8,9 @@ const auth = require('../auth')
 
 dbConnect()
 
+// enable CORS (Cross-Origin Resource Sharing) for all routes in this router
 router.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Origin', '*') // allow requests from any origin
     res.setHeader(
         'Access-Control-Allow-Headers',
         'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization'
@@ -21,7 +22,7 @@ router.use((req, res, next) => {
     next()
 })
 
-// just a debugging route
+// just a debugging route, currently
 router.get("/", (req, res, next) => {
     res.json({message: "we're in"})
 })
@@ -41,7 +42,7 @@ router.post('/signup', async (req, res) => {
 
         const {firstName, lastName, email, password} = req.body
 
-        const errors = []
+        const errors = [] // any of the following errors pushed here
 
         if (!firstName || firstName.trim() === '') {
             errors.push('First name is required')
@@ -70,6 +71,7 @@ router.post('/signup', async (req, res) => {
             password: hashedPassword
         }
 
+        // check if email is already registered
         const existingUser = await usersCollection.findOne({email: sanitisedUser.email})
         if (existingUser) {
             return res.status(409).json({message: 'Email already registered.'})
@@ -99,16 +101,18 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({message: 'Password is required'})
         }
 
+        // compare provided password with stored hashed password
         const passwordCheck = await bcrypt.compare(req.body.password, user.password)
 
         if (!passwordCheck) {
             return res.status(401).send({message: 'Incorrect password.'})
         }
 
+        // generate json web token for authentication
         const token = jwt.sign(
-            {userId: user.id, email: user.email},
-            process.env.JWT_SECRET,
-            {expiresIn: '1h'}
+            {userId: user.id, email: user.email}, // payload
+            process.env.JWT_SECRET, // secret key stored in .env
+            {expiresIn: '1h'} // token expiration time
         )
 
         res.status(200).json({message: 'User logged in successfully', email: user.email, token})
@@ -119,15 +123,17 @@ router.post('/login', async (req, res) => {
     }
 })
 
+// public endpoint (no authentication required)
 router.get('/free-endpoint', async (req, res) => {
     res.json({message: "This is a freely accessible endpoint."})
 })
 
-router.get('/auth-endpoint', auth, async (req, res) => {
+// protected endpoint (requires authentication)
+router.get('/auth-endpoint', auth, async (req, res) => { // note where auth middleware lives in protected route
     res.json({message: "This is a secure endpoint. If you can read this, it means that you are authorised."})
 })
 
-// this function checks for correct email format.
+// helper function to validate email format. this is very basic and should either be expanded or replaced with an existing library
 const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email)
