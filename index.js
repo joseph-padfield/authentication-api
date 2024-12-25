@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const router = require('./routes/router')
+const { router } = require('./routes/router')
 
 app.use(express.json())
 // middleware to parse url-encoded request bodies (for forms)

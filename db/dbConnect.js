@@ -9,19 +9,27 @@ const client = new MongoClient(url)
 async function dbConnect() {
     try {
         await client.connect()
-        console.log('Connected to database')
 
         const db = client.db(dbName)
 
         const collections = await db.listCollections().toArray()
-        console.table(collections)
 
         return client.db(dbName)
     }
     catch (error) {
-        console.error('Error connecting to MongoDB', error)
+        console.error('error connecting to MongoDB', error)
         throw error
     }
 }
 
-module.exports = dbConnect
+async function closeDb() {
+    try {
+        await client.close()
+        console.log('closed db connection')
+    }
+    catch (error) {
+        console.error('error closing connection to db', error)
+    }
+}
+
+module.exports = { dbConnect, closeDb }

@@ -2,7 +2,7 @@ const express = require('express')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const router = express.Router()
-const dbConnect = require('../db/dbConnect')
+const { dbConnect } = require('../db/dbConnect')
 const {response} = require("express");
 const auth = require('../auth')
 
@@ -139,4 +139,4 @@ const isValidEmail = (email) => {
     return emailRegex.test(email)
 }
 
-module.exports = router
+module.exports = { router, isValidEmail }
