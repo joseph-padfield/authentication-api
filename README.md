@@ -7,18 +7,19 @@ This is a backend API for user authentication built with Node.js, Express, and M
 * **Secure Registration:** User registration with input validation, password hashing using bcrypt, and prevention of duplicate email addresses.
 * **JWT Authentication:**  User login with secure JWT (JSON Web Token) authentication.
 * **Protected Routes:**  Includes an example of a protected route (`/api/auth-endpoint`) that requires a valid JWT for access.
-* **CORS Enabled:** Cross-Origin Resource Sharing (CORS) is enabled to allow requests from different origins (important for frontend development).
-* **Comprehensive Error Handling:**  `try...catch` blocks are used throughout to handle potential errors gracefully.
-* **Modular Design:** Code is well-structured with separate modules for database connection, routing, and authentication middleware.
+* **CORS Enabled:** Cross-Origin Resource Sharing (CORS) is enabled to allow requests from different origins.
+* **Comprehensive Error Handling:**  `try...catch` blocks are used throughout to handle potential errors.
 
 ## Technologies Used
 
-* Node.js
-* Express.js
-* MongoDB
+* node.js
+* express.js
+* mongoDB
 * bcrypt
 * jsonwebtoken
 * dotenv
+* jest
+* supertest
 
 ## Getting started
 
