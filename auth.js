@@ -2,19 +2,31 @@ const jwt = require('jsonwebtoken')
 
 // authentication middleware function
 // should be placed before any protected routes to ensure that only authorised users can access them
-module.exports = async (req, res, next) => {
+module.exports = (req, res, next) => {
     try {
+        if(!req.headers.authorization) {
+            return res.status(401).json({ error: 'Not authorised' });
+        }
         // extract json web token from authorisation header
-        const token = await req.headers.authorization.split(' ')[1]
-        console.log('TOKEN: ' + token) // logging token for debugging - REMOVE LATER
-        // verify token using JWT secret key
-        const decodedToken = await jwt.verify(token, process.env.JWT_SECRET)
-        // attach decoded token payload to the request object
-        req.user = await decodedToken
+        const token = req.headers.authorization.split(' ')[1]
+        // verify token using JWT secret key and attach decoded token payload to the request object
+        req.user = jwt.verify(token, process.env.JWT_SECRET)
         // this makes user information available in protected routes
         next()
     }
-    catch(err) {
-        res.status(401).json({error: 'Not authorized'})
+    catch (err) {
+        // Check if the error is a JsonWebTokenError
+        if (err.name === 'JsonWebTokenError') {
+            return res.status(401).json({ error: 'Not authorised' })
+        }
+        if (err.name === 'TokenExpiredError') {
+            return res.status(401).json({ error: 'Token expired' })
+        }
+        else {
+            // For other errors, re-throw to potentially handle them elsewhere
+            // or log them for debugging
+            console.error(err);
+            throw err;
+        }
     }
 }

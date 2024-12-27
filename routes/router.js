@@ -6,6 +6,7 @@ const { dbConnect } = require('../db/dbConnect')
 const {response} = require("express");
 const auth = require('../auth')
 
+
 dbConnect()
 
 // enable CORS (Cross-Origin Resource Sharing) for all routes in this router

@@ -1,5 +1,5 @@
-const isValidEmail = require('../routes/router').isValidEmail
-const { dbConnect, closeDb } = require('../db/dbConnect')
+const isValidEmail = require('../../routes/router').isValidEmail
+const { dbConnect, closeDb } = require('../../db/dbConnect')
 
 describe('Your test suite', () => {
 
