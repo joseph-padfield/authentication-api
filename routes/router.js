@@ -3,9 +3,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const router = express.Router()
 const { dbConnect } = require('../db/dbConnect')
-const {response} = require("express");
 const auth = require('../auth')
-
 
 dbConnect()
 
@@ -24,12 +22,12 @@ router.use((req, res, next) => {
 })
 
 // just a debugging route, currently
-router.get("/", (req, res, next) => {
-    res.json({message: "we're in"})
+router.get('/', (req, res, next) => {
+    res.json({message: 'we\'re in'})
 })
 
-// using this to check that everything is functioning as it should. it will be replaced by a login page.
-router.get("/signup", async (req, res) => {
+// using this to check that everything is functioning as it should. it will be replaced by a sign-up page.
+router.get('/signup', async (req, res) => {
     const db = await dbConnect()
     const usersCollection = await db.collection('users')
     const result = await usersCollection.find().toArray()
@@ -40,11 +38,8 @@ router.post('/signup', async (req, res) => {
     try {
         const db = await dbConnect()
         const usersCollection = await db.collection('users')
-
         const {firstName, lastName, email, password} = req.body
-
         const errors = [] // any of the following errors pushed here
-
         if (!firstName || firstName.trim() === '') {
             errors.push('First name is required')
         }
@@ -60,7 +55,6 @@ router.post('/signup', async (req, res) => {
         if (errors.length > 0) {
             return res.status(400).json({errors: errors})
         }
-
         //     hashing password using bcrypt
         const saltRounds = 10
         const hashedPassword = await bcrypt.hash(password, saltRounds)
@@ -71,16 +65,13 @@ router.post('/signup', async (req, res) => {
             email: email.trim().toLowerCase(),
             password: hashedPassword
         }
-
         // check if email is already registered
         const existingUser = await usersCollection.findOne({email: sanitisedUser.email})
         if (existingUser) {
             return res.status(409).json({message: 'Email already registered.'})
         }
-
         const result = await usersCollection.insertOne(sanitisedUser)
         res.status(201).json({message: 'User registered successfully', userId: result.insertedId})
-
     }
     catch (error) {
         console.error('Error during signup:', error)
@@ -93,29 +84,23 @@ router.post('/login', async (req, res) => {
         const db = await dbConnect()
         const usersCollection = await db.collection('users')
         const user = await usersCollection.findOne({email: req.body.email})
-
         if (!user) {
             return res.status(404).json({message: 'Email Not Found'})
         }
-
         if (!req.body.password) {
             return res.status(401).json({message: 'Password is required'})
         }
-
         // compare provided password with stored hashed password
         const passwordCheck = await bcrypt.compare(req.body.password, user.password)
-
         if (!passwordCheck) {
             return res.status(401).send({message: 'Incorrect password.'})
         }
-
         // generate json web token for authentication
         const token = jwt.sign(
             {userId: user.id, email: user.email}, // payload
             process.env.JWT_SECRET, // secret key stored in .env
             {expiresIn: '1h'} // token expiration time
         )
-
         res.status(200).json({message: 'User logged in successfully', email: user.email, token})
     }
     catch (error) {
@@ -126,12 +111,12 @@ router.post('/login', async (req, res) => {
 
 // public endpoint (no authentication required)
 router.get('/free-endpoint', async (req, res) => {
-    res.json({message: "This is a freely accessible endpoint."})
+    res.json({message: 'This is a freely accessible endpoint.'})
 })
 
 // protected endpoint (requires authentication)
 router.get('/auth-endpoint', auth, async (req, res) => { // note where auth middleware lives in protected route
-    res.json({message: "This is a secure endpoint. If you can read this, it means that you are authorised."})
+    res.json({message: 'This is a secure endpoint. If you can read this, it means that you are authorised.'})
 })
 
 // helper function to validate email format. this is very basic and should either be expanded or replaced with an existing library

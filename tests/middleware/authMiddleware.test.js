@@ -50,7 +50,7 @@ describe('authMiddleware', () => {
     it('should return 401 if the token is missing', async () => {
         const res = await req(app).get('/api/auth-endpoint')
         expect(res.statusCode).toBe(401)
-        expect(res.body.error).toBe('Not authorised')
+        expect(res.body.error).toBe('Authorisation header missing')
     });
 
     it('should return 401 if the token is invalid', async () => {
@@ -59,11 +59,11 @@ describe('authMiddleware', () => {
             .set('Authorization', `Bearer invalid token`)
 
         expect(res.statusCode).toBe(401)
-        expect(res.body.error).toBe('Not authorised')
+        expect(res.body.error).toBe('Invalid token')
     })
 
     it('should return 401 if the token is expired', async () => {
-        const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET, { expiresIn: '-1h' }) // Generate expired token
+        const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET, { expiresIn: '-1h' }) // generate expired token
 
         const res = await req(app)
             .get('/api/auth-endpoint')
@@ -71,5 +71,5 @@ describe('authMiddleware', () => {
 
         expect(res.statusCode).toBe(401)
         expect(res.body.error).toBe('Token expired')
-    });
+    })
 })

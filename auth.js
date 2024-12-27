@@ -5,7 +5,12 @@ const jwt = require('jsonwebtoken')
 module.exports = (req, res, next) => {
     try {
         if(!req.headers.authorization) {
-            return res.status(401).json({ error: 'Not authorised' });
+            return res.status(401).json({ error: 'Authorisation header missing' });
+        }
+        const authHeader = req.headers.authorization
+        // verify header is the correct Bearer <token> format
+        if(!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ error: 'Invalid authorisation format' });
         }
         // extract json web token from authorisation header
         const token = req.headers.authorization.split(' ')[1]
@@ -17,7 +22,7 @@ module.exports = (req, res, next) => {
     catch (err) {
         // Check if the error is a JsonWebTokenError
         if (err.name === 'JsonWebTokenError') {
-            return res.status(401).json({ error: 'Not authorised' })
+            return res.status(401).json({ error: 'Invalid token' })
         }
         if (err.name === 'TokenExpiredError') {
             return res.status(401).json({ error: 'Token expired' })
@@ -25,8 +30,8 @@ module.exports = (req, res, next) => {
         else {
             // For other errors, re-throw to potentially handle them elsewhere
             // or log them for debugging
-            console.error(err);
-            throw err;
+            console.err('Error during token verification')
+            return res.status(500).json({ error: 'Internal server error' });
         }
     }
 }
