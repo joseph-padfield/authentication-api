@@ -3,8 +3,9 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const router = express.Router()
 const { dbConnect } = require('../db/dbConnect')
-const auth = require('../auth')
+const auth = require('../middleware/authMiddleware')
 
+// connect to the database
 dbConnect()
 
 // enable CORS (Cross-Origin Resource Sharing) for all routes in this router
@@ -26,7 +27,7 @@ router.get('/', (req, res, next) => {
     res.json({message: 'we\'re in'})
 })
 
-// using this to check that everything is functioning as it should. it will be replaced by a sign-up page.
+// using this to check that everything is functioning as it should. it will be replaced by a page
 router.get('/signup', async (req, res) => {
     const db = await dbConnect()
     const usersCollection = await db.collection('users')
@@ -34,12 +35,15 @@ router.get('/signup', async (req, res) => {
     res.json(result)
 })
 
+// user signup route
 router.post('/signup', async (req, res) => {
     try {
         const db = await dbConnect()
         const usersCollection = await db.collection('users')
         const {firstName, lastName, email, password} = req.body
-        const errors = [] // any of the following errors pushed here
+        const errors = [] // array to store validation errors
+
+        // validate user input
         if (!firstName || firstName.trim() === '') {
             errors.push('First name is required')
         }
@@ -55,10 +59,11 @@ router.post('/signup', async (req, res) => {
         if (errors.length > 0) {
             return res.status(400).json({errors: errors})
         }
-        //     hashing password using bcrypt
+        // hash password using bcrypt
         const saltRounds = 10
         const hashedPassword = await bcrypt.hash(password, saltRounds)
-        //     input sanitisation
+
+        // sanitise user input
         const sanitisedUser = {
             firstName: firstName.trim(),
             lastName: lastName.trim(),
@@ -70,6 +75,8 @@ router.post('/signup', async (req, res) => {
         if (existingUser) {
             return res.status(409).json({message: 'Email already registered.'})
         }
+
+        // insert new user into database
         const result = await usersCollection.insertOne(sanitisedUser)
         res.status(201).json({message: 'User registered successfully', userId: result.insertedId})
     }
@@ -79,6 +86,7 @@ router.post('/signup', async (req, res) => {
     }
 })
 
+// user login route
 router.post('/login', async (req, res) => {
     try {
         const db = await dbConnect()
@@ -119,7 +127,8 @@ router.get('/auth-endpoint', auth, async (req, res) => { // note where auth midd
     res.json({message: 'This is a secure endpoint. If you can read this, it means that you are authorised.'})
 })
 
-// helper function to validate email format. this is very basic and should either be expanded or replaced with an existing library
+// helper function to validate email format.
+// this is basic and should either be expanded or replaced with an existing library
 const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email)
