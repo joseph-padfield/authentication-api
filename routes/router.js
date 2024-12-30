@@ -10,7 +10,7 @@ dbConnect()
 
 // enable CORS (Cross-Origin Resource Sharing) for all routes in this router
 router.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*') // allow requests from any origin
+    res.setHeader('Access-Control-Allow-Origin', '*') // allow requests from any origin, update for production
     res.setHeader(
         'Access-Control-Allow-Headers',
         'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization'
