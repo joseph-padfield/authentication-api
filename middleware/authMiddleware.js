@@ -26,8 +26,6 @@ module.exports = (req, res, next) => {
         next()
     }
     catch (err) {
-        // log error for debugging
-        console.error(err)
         // handle specific token-related errors
         if (err.name === 'JsonWebTokenError') {
             return res.status(401).json({ error: 'Invalid token' })

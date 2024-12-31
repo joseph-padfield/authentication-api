@@ -56,9 +56,16 @@ router.post('/signup', async (req, res) => {
         if (!password || password.length < 8) {
             errors.push('Password must be at least 8 characters')
         }
-        if (errors.length > 0) {
-            return res.status(400).json({errors: errors})
+        if (!(/\d/.test(password))) {
+            errors.push('Password must contain at least one number')
         }
+        if (!(/[a-zA-Z]/.test(password))) {
+            errors.push('Password must contain at least one letter')
+        }
+        if (errors.length > 0) {
+            return res.status(400).json({error: errors})
+        }
+
         // hash password using bcrypt
         const saltRounds = 10
         const hashedPassword = await bcrypt.hash(password, saltRounds)
@@ -73,7 +80,7 @@ router.post('/signup', async (req, res) => {
         // check if email is already registered
         const existingUser = await usersCollection.findOne({email: sanitisedUser.email})
         if (existingUser) {
-            return res.status(409).json({message: 'Email already registered.'})
+            return res.status(409).json({error: 'Email already registered.'})
         }
 
         // insert new user into database
@@ -81,8 +88,7 @@ router.post('/signup', async (req, res) => {
         res.status(201).json({message: 'User registered successfully', userId: result.insertedId})
     }
     catch (error) {
-        console.error('Error during signup:', error)
-        res.status(500).json({message: 'Signup failed.'})
+        res.status(500).json({error: 'Signup failed.'})
     }
 })
 
@@ -101,7 +107,7 @@ router.post('/login', async (req, res) => {
         // compare provided password with stored hashed password
         const passwordCheck = await bcrypt.compare(req.body.password, user.password)
         if (!passwordCheck) {
-            return res.status(401).send({message: 'Incorrect password.'})
+            return res.status(401).send({error: 'Incorrect password.'})
         }
         // generate json web token for authentication
         const token = jwt.sign(
@@ -112,8 +118,7 @@ router.post('/login', async (req, res) => {
         res.status(200).json({message: 'User logged in successfully', email: user.email, token})
     }
     catch (error) {
-        console.error('Error during login', error)
-        res.status(500).json({message: 'Login failed.'})
+        res.status(500).json({error: 'Login failed.'})
     }
 })
 

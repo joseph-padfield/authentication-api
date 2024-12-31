@@ -1,8 +1,8 @@
-const authMiddleware = require('../../middleware/authMiddleware')
+const authMiddleware = require('../middleware/authMiddleware')
 const express = require('express')
 const req = require('supertest')
 const jwt = require('jsonwebtoken')
-const router = require('../../routes/router').router
+const router = require('../routes/router').router
 require('dotenv').config() // load environment variables from .env file
 
 // create express app for testing
@@ -94,26 +94,5 @@ describe('authMiddleware', () => {
 
         expect(res.statusCode).toBe(500) // assert 500 internal server error status code
         expect(res.body.error).toBe('Internal server error') // assert correct error message
-    })
-
-    it('should log unexpected errors during token verification', async () => {
-        // spy on console.error to track its calls
-        const consoleErrorSpy = jest.spyOn(console, 'error')
-        // mock jwt.verify to throw a generic error
-        jest.spyOn(jwt, 'verify').mockImplementation(() => {
-            throw new Error('Database error')
-        })
-
-        const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
-        const req = mockRequest(token)
-        const res = mockResponse()
-
-        await authMiddleware(req, res, next)
-
-        // assert that console.error called with Error object
-        expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error))
-
-        // restore console.error to it original behaviour
-        consoleErrorSpy.mockRestore()
     })
 })

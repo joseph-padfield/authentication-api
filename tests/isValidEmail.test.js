@@ -1,7 +1,7 @@
-const isValidEmail = require('../../routes/router').isValidEmail
-const { dbConnect, closeDb } = require('../../db/dbConnect')
+const isValidEmail = require('../routes/router').isValidEmail
+const { dbConnect, closeDb } = require('../db/dbConnect')
 
-describe('Your test suite', () => {
+describe('Invalid email test', () => {
 
     // connect to the database before all tests
     beforeAll(async () => {
