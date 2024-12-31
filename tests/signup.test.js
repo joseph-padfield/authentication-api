@@ -121,15 +121,16 @@ describe('POST /api/signup', () => {
         jest.mock('../db/dbConnect', () => ({
             dbConnect: jest.fn().mockResolvedValue({
                 db: jest.fn().mockReturnValue({
-                    collection: jest.fn().mockReturnValue(usersCollection = {
-                        insertOne: jest.fn().mockRejectedValue(new Error('Database insertion error'))
+                    collection: jest.fn().mockReturnValue({
+                        findOne: jest.fn().mockReturnValue(null),
+                        insertOne: jest.fn().mockRejectedValue(new Error('Generic database error'))
                     })
                 })
             })
         }))
 
         const res = await req(app).post('/api/signup').send(userData)
-        expect(res.statusCode).toBe(409)
+        expect(res.statusCode).toBe(500)
         expect(res.body.error).toBeDefined()
     })
 

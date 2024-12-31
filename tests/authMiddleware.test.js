@@ -85,7 +85,7 @@ describe('authMiddleware', () => {
             const error = new Error('Database error')
             error.name = 'DatabaseError' // set a different error name
             throw error
-        });
+        })
 
         const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
         const res = await req(app)

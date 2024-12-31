@@ -21,6 +21,7 @@ async function dbConnect() {
 
         // return database object
         return client.db(dbName)
+
     }
     catch (error) {
         console.error('error connecting to MongoDB', error)

@@ -99,10 +99,10 @@ router.post('/login', async (req, res) => {
         const usersCollection = await db.collection('users')
         const user = await usersCollection.findOne({email: req.body.email})
         if (!user) {
-            return res.status(404).json({message: 'Email Not Found'})
+            return res.status(404).json({error: 'Email Not Found'})
         }
         if (!req.body.password) {
-            return res.status(401).json({message: 'Password is required'})
+            return res.status(401).json({error: 'Password is required'})
         }
         // compare provided password with stored hashed password
         const passwordCheck = await bcrypt.compare(req.body.password, user.password)
