@@ -6,14 +6,14 @@ module.exports = (req, res, next) => {
     try {
         // check if the authorisation header is present
         if(!req.headers.authorization) {
-            return res.status(401).json({ error: 'Authorisation header missing' });
+            return res.status(401).json({ error: 'Authorisation header missing' })
         }
 
         const authHeader = req.headers.authorization
 
         // verify header is in the correct Bearer <token> format
         if(!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({ error: 'Invalid authorisation format' });
+            return res.status(401).json({ error: 'Invalid authorisation format' })
         }
 
         // extract json web token from authorisation header
@@ -35,7 +35,7 @@ module.exports = (req, res, next) => {
         }
         else {
             // handle any other unexpected errors
-            return res.status(500).json({ error: 'Internal server error' });
+            return res.status(500).json({ error: 'Internal server error' })
         }
     }
 }

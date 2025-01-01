@@ -1,40 +1,107 @@
-# Authentication API
+# Node.js Authentication API
 
-This is a backend API for user authentication built with Node.js, Express, and MongoDB. It provides secure user registration and login functionality.
+This project implements a RESTful API for user authentication using Node.js, Express, and MongoDB. It provides secure registration and login functionality with JSON Web Tokens (JWTs) for authorisation.
 
 ## Features
 
-* **Secure Registration:** User registration with input validation, password hashing using bcrypt, and prevention of duplicate email addresses.
-* **JWT Authentication:**  User login with secure JWT (JSON Web Token) authentication.
-* **Protected Routes:**  Includes an example of a protected route (`/api/auth-endpoint`) that requires a valid JWT for access.
-* **CORS Enabled:** Cross-Origin Resource Sharing (CORS) is enabled to allow requests from different origins.
-* **Comprehensive Error Handling:**  `try...catch` blocks are used throughout to handle potential errors.
+- User registration with email and password validation.
+- Secure password hashing using bcrypt.
+- User login with email and password.
+- JWT-based authentication for protected routes.
+- Comprehensive test suite with Jest for high test coverage.
 
 ## Technologies Used
 
-* node.js
-* express.js
-* mongoDB
-* bcrypt
-* jsonwebtoken
-* dotenv
-* jest
-* supertest
+- Node.js
+- Express.js
+- MongoDB
+- bcrypt
+- jsonwebtoken (JWT)
+- Jest
 
-## Getting started
+## Getting Started
 
-* Install dependencies
-``` npm install ```
-* Set up environment variables:\
-Create a `.env` file in the root directory and add `PORT`, `DB_URL` and `JWT_SECRET`
-* Create database `authDB` with collection `users`
-* Start the server:
-`npm start`
+1.  **Clone the repository:**
+    ```
+    git clone git@github.com:joseph-padfield/authentication-api.git
+    ```
+
+2.  **Install dependencies:**
+    ```
+    cd auth-backend
+    npm install
+    ```
+
+3.  **Configure environment variables:**
+    - Create a `.env` file in the root directory.
+    - Add the following environment variables:
+      ```
+      DB_URL=<your_mongodb_connection_string>
+      JWT_SECRET=<your_jwt_secret_key>
+      ```
+
+4.  **Start the server:**
+    ```
+    npm start
+    ```
 
 ## API Endpoints
-* `/api/signup` (POST): Register a new user. Requires `firstName`, `lastName`, `email`, and `password` in the request body.
-* `/api/login` (POST): Log in an existing user. Requires `email` and `password` in the request body.
-* `/api/free-endpoint` (GET): A public endpoint accessible without authentication.
-* `/api/auth-endpoint` (GET): A protected endpoint that requires a valid JWT in the Authorization header.
 
-### This is a work in progress. The `/api/signup` (GET) route currently returns the contents of the user database, and would be replaced with a login page.
+- **POST /api/signup:** Register a new user.
+    - Request body:
+      ```json
+      {
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "john.doe@example.com",
+        "password": "SecurePassword123"
+      }
+      ```
+    - Successful response (201 Created):
+      ```json
+      {
+        "message": "User registered successfully",
+        "userId": "newly_created_user_id"
+      }
+      ```
+
+- **POST /api/login:** Login an existing user.
+    - Request body:
+      ```json
+      {
+        "email": "john.doe@example.com",
+        "password": "SecurePassword123"
+      }
+      ```
+    - Successful response (200 OK):
+      ```json
+      {
+        "message": "User logged in successfully",
+        "email": "john.doe@example.com",
+        "token": "generated_jwt_token" 
+      }
+      ```
+
+- **GET /api/free-endpoint:** Public endpoint (no authentication required).
+    - Successful response (200 OK):
+      ```json
+      {
+        "message": "This is a freely accessible endpoint."
+      }
+      ```
+
+- **GET /api/auth-endpoint:** Protected endpoint (requires authentication).
+    - Requires a valid JWT in the `Authorization` header (`Bearer your_jwt_token`).
+    - Successful response (200 OK):
+      ```json
+      {
+        "message": "This is a secure endpoint. If you can read this, it means that you are authorised."
+      }
+      ```
+
+## Testing
+
+- Run the tests using:
+  ```
+  npm test
+  ```
