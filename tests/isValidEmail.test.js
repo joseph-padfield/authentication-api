@@ -1,5 +1,4 @@
 const isValidEmail = require('../routes/router').isValidEmail
-const {dbConnect, closeDb} = require('../db/dbConnect')
 
 describe('isValidEmail', () => {
     it('returns true if email is valid', async () => {

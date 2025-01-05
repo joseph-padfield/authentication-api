@@ -138,7 +138,7 @@ describe('POST /api/signup', () => {
         const res = await req(app).post('/api/signup').send(userData)
 
         expect(res.statusCode).toBe(201)
-        expect(res.body.message).toBe('User registered successfully')
+        expect(res.body.message).toBe('user registered successfully')
         expect(res.body.userId).toBe('mockUserId')
     })
 
@@ -151,12 +151,12 @@ describe('POST /api/signup', () => {
         }
 
         // force an error during database interaction (e.g., insertOne)
-        mockCollection.insertOne.mockRejectedValue(new Error('Database error'))
+        mockCollection.insertOne.mockRejectedValue(new Error('database error'))
 
         const res = await req(app).post('/api/signup').send(userData)
 
         expect(res.statusCode).toBe(500)
-        expect(res.body.error).toBe('Signup failed.')
+        expect(res.body.error).toBe('signup failed.')
     })
 
 })

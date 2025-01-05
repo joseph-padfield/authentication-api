@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const { dbConnect } = require('../db/dbConnect')
 const router = require('../routes/router').router
 const app = express()
+
 app.use(express.json())
 app.use('/api', router)
 
@@ -40,7 +41,7 @@ describe('POST /api/login', () => {
 
         const res = await req(app).post('/api/login').send(userData)
         expect(res.statusCode).toBe(404)
-        expect(res.body.error).toBe('Email Not Found')
+        expect(res.body.error).toBe('email Not Found')
     })
 
     it('should return 401 if no password is given', async () => {
@@ -50,7 +51,7 @@ describe('POST /api/login', () => {
 
         const res = await req(app).post('/api/login').send(userData)
         expect(res.statusCode).toBe(401)
-        expect(res.body.error).toBe('Password is required')
+        expect(res.body.error).toBe('password is required')
     })
 
     it('should return 401 if password is incorrect', async () => {
@@ -64,7 +65,7 @@ describe('POST /api/login', () => {
 
         const res = await req(app).post('/api/login').send(userData)
         expect(res.statusCode).toBe(401)
-        expect(res.body.error).toBe('Incorrect password.')
+        expect(res.body.error).toBe('incorrect password.')
     })
 
     it('should return 200 if user is logged in successfully', async () => {
@@ -83,9 +84,11 @@ describe('POST /api/login', () => {
         // Mock jwt.sign to return a dummy token
         jest.spyOn(jwt, 'sign').mockReturnValue('mockJwtToken')
 
-        const res = await req(app).post('/api/login').send(userData)
+        const res = await req(app)
+            .post('/api/login')
+            .send(userData)
         expect(res.statusCode).toBe(200)
-        expect(res.body.message).toBe('User logged in successfully')
+        expect(res.body.message).toBe('user logged in successfully')
         expect(res.body.token).toBeDefined()
     })
 
@@ -99,6 +102,6 @@ describe('POST /api/login', () => {
 
         const res = await req(app).post('/api/login').send(userData)
         expect(res.statusCode).toBe(500)
-        expect(res.body.error).toBe('Login failed.')
+        expect(res.body.error).toBe('login failed.')
     })
 })
